@@ -16,7 +16,7 @@ func SetupRoutes(r *gin.Engine, db *sql.DB) {
 	api := r.Group("/api")
 	api.Use(middleware.JWTAuth())
 	{
-		// Endpoint untuk upload gambar produk
+		// Endpoint untuk crud produk
 		api.POST("/products", controllers.CreateProduct(db))       // Create product
 		api.GET("/products", controllers.GetProducts(db))          // Get all products
 		api.GET("/products/:id", controllers.GetProductByID(db))   // Get product by ID

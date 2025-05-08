@@ -5,16 +5,21 @@ import (
 	"madoo-pulsa-api/models"
 	"madoo-pulsa-api/repositories"
 	"madoo-pulsa-api/utils"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 func Register(db *sql.DB, username, password string) error {
 	hash, _ := utils.HashPassword(password)
+	token, _ := utils.GenerateToken(username)
 	user := models.User{
-		ID:       uuid.New().String(),
-		Username: username,
-		Password: hash,
+		ID:        uuid.New().String(),
+		Username:  username,
+		Password:  hash,
+		Token:     token,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 	return repositories.CreateUser(db, user)
 }
