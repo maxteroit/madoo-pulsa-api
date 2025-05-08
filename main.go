@@ -4,7 +4,10 @@ import (
 	"log"
 	"madoo-pulsa-api/config"
 	"madoo-pulsa-api/routes"
+	"madoo-pulsa-api/swagger"
 	"os"
+
+	_ "madoo-pulsa-api/docs"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -28,5 +31,8 @@ func main() {
 
 	routes.SetupRoutes(r, db)
 
+	swagger.SetupSwagger(r) // // Setup Swagger documentation
+
 	r.Run(":" + os.Getenv("PORT"))
+
 }

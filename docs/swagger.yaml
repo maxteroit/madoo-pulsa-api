@@ -1,0 +1,118 @@
+basePath: /
+definitions:
+  models.Product:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      expired_date:
+        type: string
+      id:
+        type: string
+      image:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      qty:
+        type: integer
+      updated_at:
+        type: string
+    required:
+    - expired_date
+    - name
+    - price
+    - qty
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API Madoo Pulsa
+  title: Madoo Pulsa API
+  version: "1.0"
+paths:
+  /api/products:
+    post:
+      consumes:
+      - application/json
+      description: Tambahkan produk baru ke sistem
+      parameters:
+      - description: Product JSON
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/models.Product'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Buat produk baru
+      tags:
+      - products
+  /api/products/{id}/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Mengupload gambar untuk produk berdasarkan ID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Product Image
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Upload gambar produk
+      tags:
+      - products
+swagger: "2.0"

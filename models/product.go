@@ -1,13 +1,15 @@
 package models
 
+import "time"
+
 type Product struct {
-	ID          string  `json:"id"`
-	Name        string  `json:"name"`
-	Price       float64 `json:"price"`
-	Qty         int     `json:"qty"`
-	ExpiredDate string  `json:"expired_date"`
-	Image       string  `json:"image"`
-	DeletedAt   *string `json:"deleted_at,omitempty"`
-	CreatedAt   string  `json:"created_at"`
-	UpdatedAt   string  `json:"updated_at"`
+	ID          string    `json:"id"`
+	Name        string    `json:"name" binding:"required"`
+	Price       float64   `json:"price" binding:"required"`
+	Qty         int       `json:"qty" binding:"required"`
+	ExpiredDate time.Time `json:"expired_date" binding:"required"`
+	Image       string    `json:"image"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	DeletedAt   *time.Time `json:"deleted_at,omitempty"`
 }
