@@ -1,0 +1,30 @@
+ARG DOCKER_REGISTRY=docker.io
+FROM --platform=linux/amd64 ${DOCKER_REGISTRY}/golang:1.21-alpine
+
+ENV GOSUMDB=off
+
+ARG GONOSUMDB=""
+ENV GONOSUMDB=${GONOSUMDB}
+
+# ENV GOPROXY=off
+
+ARG USING_PROXY=false
+ENV if [ ${USING_PROXY} = true ]; then \
+    GOPROXY=${PROXY} \
+;fi
+
+RUN go version
+
+WORKDIR /app
+
+COPY . .
+# COPY .env.example .env
+
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o pulsa-api
+
+ARG APP_PORT=9001
+ENV PORT ${APP_PORT}
+
+EXPOSE ${PORT}
+
+CMD ["./pulsa-api"]
