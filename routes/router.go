@@ -26,4 +26,11 @@ func SetupRoutes(r *gin.Engine, db *sql.DB) {
 		// Endpoint untuk upload gambar produk
 		api.POST("/products/upload/:id", controllers.UploadProductImage(db))
 	}
+
+	tt := r.Group("/api")
+	tt.POST("/transaction-types", controllers.CreateTransactionType(db)) // Create transaction type
+	tt.GET("/transaction-types", controllers.GetTransactionTypes(db))   // Get all transaction types
+	// tt.GET("/transaction-types/:id", controllers.GetTransactionTypeByID(db)) // Get transaction type by ID
+	// tt.PUT("/transaction-types/:id", controllers.UpdateTransactionType(db)) // Update transaction type
+	// tt.DELETE("/transaction-types/:id", controllers.DeleteTransactionType(db)) // Soft delete transaction type
 }
