@@ -21,11 +21,11 @@ func TestCreateAndGetProducts(t *testing.T) {
 
 	// Login dulu untuk ambil token
 	loginPayload := AuthPayload{
-		Username: "testuser",
-		Password: "password123",
+		PhoneNumber: "081234567890",
+		Password:    "password123",
 	}
 	payloadBytes, _ := json.Marshal(loginPayload)
-	req := httptest.NewRequest("POST", "/auth/login", bytes.NewBuffer(payloadBytes))
+	req := httptest.NewRequest("POST", "/api/v1/auth/login", bytes.NewBuffer(payloadBytes))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
@@ -48,7 +48,7 @@ func TestCreateAndGetProducts(t *testing.T) {
 		Image:       "image.png",
 	}
 	productBytes, _ := json.Marshal(product)
-	req = httptest.NewRequest("POST", "/api/products", bytes.NewBuffer(productBytes))
+	req = httptest.NewRequest("POST", "/api/v1/products", bytes.NewBuffer(productBytes))
 	req.Header.Set("Authorization", token)
 	req.Header.Set("Content-Type", "application/json")
 	w = httptest.NewRecorder()
@@ -72,11 +72,11 @@ func TestUploadProductImage(t *testing.T) {
 
 	// Login untuk ambil token
 	loginPayload := AuthPayload{
-		Username: "testuser",
-		Password: "password123",
+		PhoneNumber: "081234567890",
+		Password:    "password123",
 	}
 	payloadBytes, _ := json.Marshal(loginPayload)
-	req := httptest.NewRequest("POST", "/auth/login", bytes.NewBuffer(payloadBytes))
+	req := httptest.NewRequest("POST", "/api/v1/auth/login", bytes.NewBuffer(payloadBytes))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
@@ -107,7 +107,7 @@ func TestUploadProductImage(t *testing.T) {
 		t.Fatalf("Failed to close writer: %v", err)
 	}
 
-	req = httptest.NewRequest("POST", "/api/products/1/upload", body)
+	req = httptest.NewRequest("POST", "/api/v1/products/1/upload", body)
 	req.Header.Set("Authorization", token)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 
@@ -122,7 +122,7 @@ func TestUploadProductImage(t *testing.T) {
 	assert.Equal(t, "Image uploaded successfully", response["message"])
 
 	// Verify the product image path was updated
-	req = httptest.NewRequest("GET", "/api/products/1", nil)
+	req = httptest.NewRequest("GET", "/api/v1/products/1", nil)
 	req.Header.Set("Authorization", token)
 	w = httptest.NewRecorder()
 	r.ServeHTTP(w, req)

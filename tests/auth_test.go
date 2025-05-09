@@ -23,8 +23,8 @@ func setupTestRouter() (*gin.Engine, *sql.DB) {
 }
 
 type AuthPayload struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	PhoneNumber string `json:"phone_number"`
+	Password    string `json:"password"`
 }
 
 func TestRegisterLoginFlow(t *testing.T) {
@@ -32,11 +32,11 @@ func TestRegisterLoginFlow(t *testing.T) {
 
 	// Register
 	registerPayload := AuthPayload{
-		Username: "testuser",
-		Password: "password123",
+		PhoneNumber: "081234567890",
+		Password:    "password123",
 	}
 	payloadBytes, _ := json.Marshal(registerPayload)
-	req := httptest.NewRequest("POST", "/auth/register", bytes.NewBuffer(payloadBytes))
+	req := httptest.NewRequest("POST", "/api/v1/auth/register", bytes.NewBuffer(payloadBytes))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
@@ -44,11 +44,11 @@ func TestRegisterLoginFlow(t *testing.T) {
 
 	// Login
 	loginPayload := AuthPayload{
-		Username: "testuser",
-		Password: "password123",
+		PhoneNumber: "081234567890",
+		Password:    "password123",
 	}
 	payloadBytes, _ = json.Marshal(loginPayload)
-	req = httptest.NewRequest("POST", "/auth/login", bytes.NewBuffer(payloadBytes))
+	req = httptest.NewRequest("POST", "/api/v1/auth/login", bytes.NewBuffer(payloadBytes))
 	req.Header.Set("Content-Type", "application/json")
 	w = httptest.NewRecorder()
 	r.ServeHTTP(w, req)

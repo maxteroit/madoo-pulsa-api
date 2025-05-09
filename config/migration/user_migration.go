@@ -9,7 +9,7 @@ func UserMigration(db *sql.DB) error {
 	query := `
 	CREATE TABLE IF NOT EXISTS users (
 		id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-		username VARCHAR(255) NOT NULL,
+		phone_number VARCHAR(255) NOT NULL,
 		password VARCHAR(255) NOT NULL,
 		token VARCHAR(255),
 		created_at TIMESTAMPTZ DEFAULT NOW(),
