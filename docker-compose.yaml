@@ -1,0 +1,19 @@
+name: pulsa-api
+services:
+  pulsa:
+    build:
+      dockerfile: Dockerfile.prod
+    container_name: pulsa-api
+    image: abietomy:pulsa-api
+    environment:
+      - SERVICE_CODE=PULSA
+    platform: 'linux/amd64'
+    volumes:
+      - ./:/var/www/html:delegated
+    ports:
+      - 9001:8080
+    networks:
+      - ms_network
+networks:
+    ms_network:
+      driver: bridge
