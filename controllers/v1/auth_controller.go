@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"madoo-pulsa-api/utils"
 )
 
 type AuthInput struct {
@@ -17,15 +18,15 @@ func Register(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var input AuthInput
 		if err := c.ShouldBindJSON(&input); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			utils.CreateResponse(c, http.StatusBadRequest, "Invalid input", nil)
 			return
 		}
 		err := services.Register(db, input.Username, input.Password)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			utils.CreateResponse(c, http.StatusInternalServerError, "Failed to register user", nil)
 			return
 		}
-		c.JSON(http.StatusCreated, gin.H{"message": "User registered"})
+		utils.CreateResponse(c, http.StatusCreated, "User registered successfully", nil)
 	}
 }
 
@@ -33,14 +34,17 @@ func Login(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var input AuthInput
 		if err := c.ShouldBindJSON(&input); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			utils.CreateResponse(c, http.StatusBadRequest, "Invalid input", nil)
 			return
 		}
 		token, refresh, err := services.Login(db, input.Username, input.Password)
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+			utils.CreateResponse(c, http.StatusUnauthorized, "Invalid credentials", nil)
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"token": token, "refresh_token": refresh})
+		utils.CreateResponse(c, http.StatusOK, "Login successful", gin.H{
+			"token":         token,
+			"refresh_token": refresh,
+		})
 	}
 }
