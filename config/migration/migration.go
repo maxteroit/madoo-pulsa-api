@@ -7,7 +7,7 @@ type Migration func(*sql.DB) error
 
 func RunMigrations(db *sql.DB) error {
 	migrations := []Migration{
-		// UserMigration,
+		UserMigration,
 		// ProductMigration,
 		TransactionTypeMigration,
 		TermsConditionUserMigration,

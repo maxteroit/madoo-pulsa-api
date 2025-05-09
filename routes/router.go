@@ -2,35 +2,40 @@ package routes
 
 import (
 	"database/sql"
-	"madoo-pulsa-api/controllers"
+	apiv1 "madoo-pulsa-api/controllers/v1"
+	// apiv2 "madoo-pulsa-api/controllers/v2" // contoh jika ada versi lain
 	"madoo-pulsa-api/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
 func SetupRoutes(r *gin.Engine, db *sql.DB) {
-	auth := r.Group("/auth")
-	auth.POST("/register", controllers.Register(db))
-	auth.POST("/login", controllers.Login(db))
+	v1 := r.Group("/api/v1")
+	auth := v1.Group("/auth")
+	auth.POST("/register", apiv1.Register(db))
+	auth.POST("/login", apiv1.Login(db))
 
-	api := r.Group("/api")
-	api.Use(middleware.JWTAuth())
+	protected := v1.Group("/")
+	protected.Use(middleware.JWTAuth())
 	{
-		// Endpoint untuk crud produk
-		api.POST("/products", controllers.CreateProduct(db))       // Create product
-		api.GET("/products", controllers.GetProducts(db))          // Get all products
-		api.GET("/products/:id", controllers.GetProductByID(db))   // Get product by ID
-		api.PUT("/products/:id", controllers.UpdateProduct(db))    // Update product
-		api.DELETE("/products/:id", controllers.DeleteProduct(db)) // Soft delete product
+		products := protected.Group("/products")
+		{
+			products.POST("/", apiv1.CreateProduct(db))       // Create product
+			products.GET("/", apiv1.GetProducts(db))          // Get all products
+			products.GET("/:id", apiv1.GetProductByID(db))     // Get product by ID
+			products.PUT("/:id", apiv1.UpdateProduct(db))      // Update product
+			products.DELETE("/:id", apiv1.DeleteProduct(db))   // Soft delete product
 
-		// Endpoint untuk upload gambar produk
-		api.POST("/products/upload/:id", controllers.UploadProductImage(db))
+			products.POST("/upload/:id", apiv1.UploadProductImage(db)) // Upload product image
+		}
+
+		transaction_types := protected.Group("/transaction-types")
+		{
+			transaction_types.POST("/", apiv1.CreateTransactionType(db)) // Create transaction type
+			transaction_types.GET("/", apiv1.GetTransactionTypes(db))     // Get all transaction types
+			// transaction_types.GET("/:id", apiv1.GetTransactionTypeByID(db)) // Get transaction type by ID
+			// transaction_types.PUT("/:id", apiv1.UpdateTransactionType(db)) // Update transaction type		
+			// transaction_types.DELETE("/:id", apiv1.DeleteTransactionType(db)) // Soft delete transaction type
+		}
 	}
-
-	tt := r.Group("/api")
-	tt.POST("/transaction-types", controllers.CreateTransactionType(db)) // Create transaction type
-	tt.GET("/transaction-types", controllers.GetTransactionTypes(db))   // Get all transaction types
-	// tt.GET("/transaction-types/:id", controllers.GetTransactionTypeByID(db)) // Get transaction type by ID
-	// tt.PUT("/transaction-types/:id", controllers.UpdateTransactionType(db)) // Update transaction type
-	// tt.DELETE("/transaction-types/:id", controllers.DeleteTransactionType(db)) // Soft delete transaction type
 }
