@@ -53,14 +53,29 @@ func Login(db *sql.DB, username, password string) (string, string, error) {
 	log.Println("[Login] Username ditemukan:", user.Username)
 	log.Println("[Login] Password hash tersimpan:", user.Password)
 
-	if !utils.CheckPasswordHash(password, user.Password) {
-		log.Println("[Login] Password tidak cocok")
-		return "", "", errors.New("invalid password")
+	token, err := utils.GenerateToken(username)
+	if err != nil {
+		log.Println("[Login] Gagal generate token:", err)
+		return "", "", err
 	}
 
-	token, _ := utils.GenerateToken(username)
-	refresh, _ := utils.GenerateRefreshToken(username)
-	log.Println("[Login] Token berhasil dibuat")
+	refresh, err := utils.GenerateRefreshToken(username)
+	if err != nil {
+		log.Println("[Login] Gagal generate refresh token:", err)
+		return "", "", err
+	}
 
+	// Update token to database
+	rowsAffected, err := repositories.UpdateUserToken(db, username, token)
+	if err != nil {
+		log.Println("[Login] Gagal update token ke database:", err)
+		return "", "", err
+	}
+	if rowsAffected == 0 {
+		log.Println("[Login] Tidak ada baris yang terupdate (username mungkin tidak ditemukan)")
+		return "", "", errors.New("failed to update token")
+	}
+
+	log.Println("[Login] Token berhasil dibuat dan disimpan ke DB")
 	return token, refresh, nil
 }

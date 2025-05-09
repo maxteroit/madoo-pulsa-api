@@ -32,3 +32,12 @@ func CreateUser(db *sql.DB, user models.User) error {
 	_, err := db.Exec("INSERT INTO users (id, username, password, token, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6)", user.ID, user.Username, user.Password, user.Token, user.CreatedAt, user.UpdatedAt)
 	return err
 }
+
+func UpdateUserToken(db *sql.DB, username, token string) (int64, error) {
+	result, err := db.Exec("UPDATE users SET token = $1 WHERE username = $2", token, username)
+
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
+}
