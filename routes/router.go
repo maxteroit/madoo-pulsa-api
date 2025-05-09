@@ -7,10 +7,13 @@ import (
 	"madoo-pulsa-api/middleware"
 
 	"github.com/gin-gonic/gin"
+	// "os"
 )
 
 func SetupRoutes(r *gin.Engine, db *sql.DB) {
+
 	v1 := r.Group("/api/v1")
+	v1.Use(middleware.RequireHeader("X-Api-Key", "API_KEY"))
 	auth := v1.Group("/auth")
 	auth.POST("/register", apiv1.Register(db))
 	auth.POST("/login", apiv1.Login(db))
