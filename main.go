@@ -11,6 +11,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+
+	"madoo-pulsa-api/config/migration"
+	"madoo-pulsa-api/config/seeder"
 )
 
 // @title Madoo Pulsa API
@@ -27,6 +30,20 @@ func main() {
 	}
 
 	db := config.InitDB()
+
+	if err := migration.RunMigrations(db); err != nil {
+		log.Fatalf("Migration error: %v", err)
+	}
+
+	if os.Getenv("SEED") == "true" {
+		if err := seeder.RunSeeders(db); err != nil {
+			log.Fatalf("Seeder failed: %v", err)
+		}
+		log.Println("Seeder done ✅")
+	}
+
+	log.Println("All tables created successfully.")
+
 	r := gin.Default()
 
 	routes.SetupRoutes(r, db)
